@@ -1,0 +1,10 @@
+body {
+  left: 0;
+  -moz-transition: left 0ms linear 1ms;
+  -webkit-transition: left 0ms linear 1ms;
+  -o-transition: left 0ms linear 1ms;
+  transition: left 0ms linear 1ms;
+}
+body.transitioning {
+  left: 1px;
+}
