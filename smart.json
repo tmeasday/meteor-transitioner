@@ -1,7 +1,16 @@
 {
+  "name": "transitioner",
+  "description": "Helps transition your app between two pages",
+  "homepage": "https://github.com/tmeasday/meteor-transitioner",
+  "author": "Tom Coleman <tom@thesnail.org>",
+  "version": "0.1.0",
+  "git": "https://github.com/tmeasday/meteor-transitioner.git",
   "packages": {
     "deps-extensions": {
       "git": "https://github.com/tmeasday/meteor-deps-extensions.git"
+    },
+    "router": {
+      "git": "https://github.com/tmeasday/meteor-router.git"
     }
   }
 }
