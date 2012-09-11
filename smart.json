@@ -6,11 +6,7 @@
   "version": "0.1.0",
   "git": "https://github.com/tmeasday/meteor-transitioner.git",
   "packages": {
-    "deps-extensions": {
-      "git": "https://github.com/tmeasday/meteor-deps-extensions.git"
-    },
-    "router": {
-      "git": "https://github.com/tmeasday/meteor-router.git"
-    }
+    "deps-extensions": {},
+    "router": {}
   }
 }
