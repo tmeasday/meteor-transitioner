@@ -51,6 +51,11 @@ Transitioner.prototype = {
     
     this.current_page.set(this.next_page(true));
     this.next_page.set(null);
+    
+    // we need to ensure that the divs have changed before the body loses the 
+    // transitioning class. 
+    // XXX: use Meteor._atFlush to do this, once it's in master + public
+    Meteor.flush();
   },
   
   _transition_classes: function() {
