@@ -1,0 +1,53 @@
+/* CSS declarations go here */
+
+.container {
+  width: 500px;
+  height: 300px;
+  background: #eee;
+  overflow: hidden;
+  position: relative;
+}
+
+.wrap {
+  width: 1000px;
+  position: relative;
+}
+
+/* animation */
+.transitioning .wrap {
+  left: -500px;
+  transition: left 1000ms ease-in-out 0;
+  -moz-transition: left 1000ms ease-in-out 0;
+  -webkit-transition: left 1000ms ease-in-out 0;
+}
+
+body {
+  left: 0;
+  transition: left 1000ms ease-in-out 0;
+  -moz-transition: left 1000ms ease-in-out 0;
+  -webkit-transition: left 1000ms ease-in-out 0;
+}
+body.transitioning {
+  left: 1px;
+}
+
+.current, .next {
+  width: 496px;
+  height: 296px;
+  float: left;
+  line-height: 296px;
+  text-align: center;
+}
+.current {
+  background: rgb(102, 153, 204);
+  border: 2px solid rgb(51, 102, 204);
+}
+
+.next {
+  background: rgb(255, 204, 153);
+  border: 2px solid rgb(255, 153, 102);
+}
+
+form {
+  clear: both;
+}

@@ -1,0 +1,34 @@
+<head>
+  <title>slider</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="wrap">
+      {{> slider}}
+    </div>
+  </div>
+  {{> buttons}}
+</body>
+
+<template name="slider">
+  <div class="current">
+    {{> onePage currentScreen}}
+  </div>
+  <div class="next">
+    {{> onePage nextScreen}}
+  </div>
+</template>
+
+<template name="onePage">
+  {{#if this}}
+    {{this}}
+  {{/if}}  
+</template>
+
+<template name="buttons">
+  <form>
+    <input name="page"></input>
+    <button class="goto">Goto >></button>
+  </form>
+</template>
