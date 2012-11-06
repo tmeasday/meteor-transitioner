@@ -7,17 +7,7 @@ _NOTE_: the above article uses outdated syntax.
 
 ## Install
 
-Use [meteorite](http://possibilities.github.com/meteorite/):
-
-```json
-{
-  "packages": {
-    "transitioner": {}
-  }
-}
-```
-
-Then add via:
+Use [meteorite](http://possibilities.github.com/meteorite/). Then add via:
 
 ```bash
 mrt add transitioner
