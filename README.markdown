@@ -29,11 +29,15 @@ Whilst the transition is happening, the `<body>` will have the class `transition
 
 ```css
 body {
-  /* you'll need the standard -moz- etc */
-  transition: opacity 0 linear 1000ms;
+  /* assuming you want a transparent body */
+  background: rgba(0, 0, 0, 0);
+  
+  /* you'll need the standard -moz- etc -- you are using a CSS preproc right? */
+  transition: background 0 linear 1s;
 }
 body.transitioning {
-  opacity: 0.99999;
+  /* a different color that happens to also be tranparent */
+  background: rgba(1, 0, 0, 0);
 }
 ```
 

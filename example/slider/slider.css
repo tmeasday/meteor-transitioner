@@ -22,13 +22,13 @@
 }
 
 body {
-  left: 0;
-  transition: left 1000ms ease-in-out 0;
-  -moz-transition: left 1000ms ease-in-out 0;
-  -webkit-transition: left 1000ms ease-in-out 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0 linear 1s;
+  -moz-transition: background 0 linear 1s;
+  -webkit-transition: background 0 linear 1s;
 }
 body.transitioning {
-  left: 1px;
+  background: rgba(1, 0, 0, 0);
 }
 
 .current, .next {
