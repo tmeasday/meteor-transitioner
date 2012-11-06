@@ -1,65 +1,104 @@
-// sits in front of the router and provides 'current_page' and 'next_page',
+// sits in front of the router and provides 'currentPage' and 'nextPage',
 // whilst setting the correct classes on the body to allow transitions, namely:
 //
-// body.transitioning.from_X.to_Y
-Transitioner = function() {
-  Meteor.deps.add_reactive_variable(this, 'current_page', 'loading');
-  Meteor.deps.add_reactive_variable(this, 'next_page');
-}
-Transitioner._transition_events = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
-Transitioner.prototype = {
-  init: function(Router) {
-    var self = this;
-    
-    self.current_page.set(Router.current_page())
-    Meteor.deps.await(function () { return Router.current_page() !== self.current_page(true) }, function() {
-      self.transition_to(Router.current_page());
-    });
-  },
-  
-  // we need to be careful not to do anything reactive in here or we can get into loops
-  transition_to: function(new_page) {
-    var self = this;
-    
-    // better kill the current transition
-    if (self.next_page(true))
-      self.transition_end();
-    
-    if (new_page === self.current_page(true))
-      return;
-    
-    // Start the transition (need to wait until meteor + the browser has rendered...)
-    self.next_page.set(new_page)
-    Meteor.defer(function() {
-      // we want to wait until the TE event has fired for both containers
-      $('body')
-        .addClass(self._transition_classes())
-        .on(Transitioner._transition_events, function (e) {
-          if ($(e.target).is('body'))
-            self.transition_end();
-        });
-    });
-  },
-  
-  transition_end: function() {
-    var classes = this._transition_classes();
-    $('body').off('.transitioner').removeClass(classes);
-    
-    // if there isn't a next page to go to, we can't do the switch
-    if (!this.next_page(true))
-      return;
-    
-    this.current_page.set(this.next_page(true));
-    this.next_page.set(null);
-    
-    // we need to ensure that the divs have changed before the body loses the 
-    // transitioning class. 
-    // XXX: use Meteor._atFlush to do this, once it's in master + public
-    Meteor.flush();
-  },
-  
-  _transition_classes: function() {
-    return "transitioning from_" + this.current_page(true) + 
-      " to_" + this.next_page(true);
+//   body.transitioning.from_X.to_Y
+
+(function() {
+  var Transitioner = function() {
+    this._currentPage = null;
+    this._currentPageListeners = new Meteor.deps._ContextSet();
+    this._nextPage = null;
+    this._nextPageListeners = new Meteor.deps._ContextSet();
   }
-}
+  Transitioner._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
+  
+  Transitioner.prototype._transitionClasses = function() {
+    return "transitioning from_" + this._currentPage + 
+      " to_" + this._nextPage;
+  }
+  
+  Transitioner.prototype.currentPage = function() {
+    this._currentPageListeners.addCurrentContext();
+    return this._currentPage;
+  }
+  
+  Transitioner.prototype._setCurrentPage = function(page) {
+    this._currentPage = page;
+    this._currentPageListeners.invalidateAll();
+  }
+  
+  Transitioner.prototype.nextPage = function() {
+    this._nextPageListeners.addCurrentContext();
+    return this._nextPage;
+  }
+  
+  Transitioner.prototype._setNextPage = function(page) {
+    this._nextPage = page;
+    this._nextPageListeners.invalidateAll();
+  }
+  
+  Transitioner.prototype.listen = function() {
+    var self = this;
+    
+    Meteor.autorun(function() {
+      self.transition(Meteor.Router.page());
+    });
+  }
+  
+  // do a transition to newPage, if we are already set and there already
+  //
+  // note: this is called inside an autorun, so we need to take care to not 
+  // do anything reactive.
+  Transitioner.prototype.transition = function(newPage) {
+    var self = this;
+    
+    // this is our first page? don't do a transition
+    if (!self._currentPage)
+      return self._setCurrentPage(newPage);
+    
+    // if we are transitioning already, quickly finish that transition
+    if (self._nextPage)
+      self.endTransition();
+    
+    // if we are transitioning to the page we are already on, no-op
+    if (self._currentPage === newPage)
+      return;
+    
+    // Start the transition -- first tell any listeners to re-draw themselves
+    self._setNextPage(newPage);
+    // wait until they are done/doing:
+    Meteor._atFlush(function() {
+      // add relevant classes to the body and wait for the body to finish 
+      // transitioning (this is how we know the transition is done)
+      $('body')
+        .addClass(self._transitionClasses())
+        .on(Transitioner._transitionEvents, function (e) {
+          if ($(e.target).is('body'))
+            self.endTransition();
+        });
+    })
+  }
+  
+  Transitioner.prototype.endTransition = function() {
+    var self = this;
+    
+    // if nextPage isn't set, something weird is going on, bail
+    if (! self._nextPage)
+      return;
+    
+    // switch
+    self._setCurrentPage(self._nextPage);
+    self._setNextPage(null);
+    
+    // clean up our transitioning state
+    Meteor._atFlush(function() {
+      var classes = self._transitionClasses();
+      $('body').off('.transitioner').removeClass(classes);
+    });
+  }
+  
+  Meteor.Transitioner = new Transitioner();
+  Meteor.startup(function() {
+    Meteor.Transitioner.listen();
+  });
+}());
