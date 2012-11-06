@@ -36,7 +36,7 @@ body {
   transition: background 0 linear 1s;
 }
 body.transitioning {
-  /* a different color that happens to also be tranparent */
+  /* a different color that happens to also be transparent */
   background: rgba(1, 0, 0, 0);
 }
 ```
