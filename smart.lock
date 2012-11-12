@@ -1,0 +1,29 @@
+{
+  "meteor": {
+    "git": "https://github.com/meteor/meteor.git",
+    "branch": "master",
+    "commit": "68dafc94c5f1eb6cf2350ee74e9f65130f665bc5"
+  },
+  "dependencies": {
+    "basePackages": {
+      "transitioner": {
+        "path": "."
+      }
+    },
+    "packages": {
+      "transitioner": {
+        "path": "."
+      },
+      "router": {
+        "git": "https://github.com/tmeasday/meteor-router.git",
+        "tag": "v0.2.3",
+        "commit": "0a6431923ba2724727233cf9300cdfe81076b9cd"
+      },
+      "page-js": {
+        "git": "https://github.com/tmeasday/meteor-page-js.git",
+        "tag": "v1.3.1",
+        "commit": "ee0b651869928abe50b5d06d7f32ccd2e657883a"
+      }
+    }
+  }
+}
