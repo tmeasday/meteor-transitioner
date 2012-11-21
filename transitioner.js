@@ -10,7 +10,7 @@
     this._nextPage = null;
     this._nextPageListeners = new Meteor.deps._ContextSet();
   }
-  Transitioner._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
+  Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
   
   Transitioner.prototype._transitionClasses = function() {
     return "transitioning from_" + this._currentPage + 
@@ -72,7 +72,7 @@
       // transitioning (this is how we know the transition is done)
       $('body')
         .addClass(self._transitionClasses())
-        .on(Transitioner._transitionEvents, function (e) {
+        .on(self._transitionEvents, function (e) {
           if ($(e.target).is('body'))
             self.endTransition();
         });
