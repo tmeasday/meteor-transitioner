@@ -16,9 +16,9 @@
 /* animation */
 .transitioning .wrap {
   left: -500px;
-  transition: left 5s ease-in-out 0;
-  -moz-transition: left 5s ease-in-out 0;
-  -webkit-transition: left 5s ease-in-out 0;
+  transition: left 1s ease-in-out 0;
+  -moz-transition: left 1s ease-in-out 0;
+  -webkit-transition: left 1s ease-in-out 0;
 }
 
 .transitioning.back .wrap {
@@ -27,9 +27,9 @@
 
 body {
   background: rgba(0, 0, 0, 0);
-  transition: background 0 linear 5s;
-  -moz-transition: background 0 linear 5s;
-  -webkit-transition: background 0 linear 5s;
+  transition: background 0 linear 1s;
+  -moz-transition: background 0 linear 1s;
+  -webkit-transition: background 0 linear 1s;
 }
 body.transitioning {
   background: rgba(1, 0, 0, 0);
