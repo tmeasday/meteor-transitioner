@@ -9,12 +9,13 @@
     this._currentPageListeners = new Meteor.deps._ContextSet();
     this._nextPage = null;
     this._nextPageListeners = new Meteor.deps._ContextSet();
+    this._back = false;
   }
   Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
   
   Transitioner.prototype._transitionClasses = function() {
     return "transitioning from_" + this._currentPage + 
-      " to_" + this._nextPage;
+      " to_" + this._nextPage + (this._back ? ' back' : '');
   }
   
   Transitioner.prototype.currentPage = function() {
@@ -94,7 +95,17 @@
     Meteor._atFlush(function() {
       var classes = self._transitionClasses();
       $('body').off('.transitioner').removeClass(classes);
+      self._back = false;
     });
+  }
+  
+  Transitioner.prototype.back = function() {
+    var self = this;
+    
+    if(window.history){
+      window.history.back();
+      self._back = true;
+    }
   }
   
   Meteor.Transitioner = new Transitioner();

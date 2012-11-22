@@ -17,6 +17,9 @@ if (Meteor.isClient) {
     'submit': function(e, template) {
       e.preventDefault();
       Meteor.Router.to('/' + template.find('input').value)
-    }
+    },
+		'click .back': function(e) {
+			Meteor.Transitioner.back();
+		}
   });
 }
