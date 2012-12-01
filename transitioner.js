@@ -9,6 +9,11 @@
     this._currentPageListeners = new Meteor.deps._ContextSet();
     this._nextPage = null;
     this._nextPageListeners = new Meteor.deps._ContextSet();
+    this._options = {
+      before: function(){},
+      after: function(){},
+      redrawAfterTransition: true
+    };
   }
   Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
   
@@ -17,14 +22,23 @@
       " to_" + this._nextPage;
   }
   
+  Transitioner.prototype.setOptions = function(options) {
+    for (var key in options){
+      if (options.hasOwnProperty(key)){
+        this._options[key] = options[key];
+      }
+    }
+  }
+  
   Transitioner.prototype.currentPage = function() {
     this._currentPageListeners.addCurrentContext();
     return this._currentPage;
   }
   
-  Transitioner.prototype._setCurrentPage = function(page) {
+  Transitioner.prototype._setCurrentPage = function(page, redraw) {
     this._currentPage = page;
-    this._currentPageListeners.invalidateAll();
+    if (this._options.redrawAfterTransition || redraw)
+      this._currentPageListeners.invalidateAll();
   }
   
   Transitioner.prototype.nextPage = function() {
@@ -32,9 +46,10 @@
     return this._nextPage;
   }
   
-  Transitioner.prototype._setNextPage = function(page) {
+  Transitioner.prototype._setNextPage = function(page, redraw) {
     this._nextPage = page;
-    this._nextPageListeners.invalidateAll();
+    if (this._options.redrawAfterTransition || redraw)
+      this._nextPageListeners.invalidateAll();
   }
   
   Transitioner.prototype.listen = function() {
@@ -54,7 +69,7 @@
     
     // this is our first page? don't do a transition
     if (!self._currentPage)
-      return self._setCurrentPage(newPage);
+      return self._setCurrentPage(newPage, true);
     
     // if we are transitioning already, quickly finish that transition
     if (self._nextPage)
@@ -65,9 +80,14 @@
       return;
     
     // Start the transition -- first tell any listeners to re-draw themselves
-    self._setNextPage(newPage);
+    self._setNextPage(newPage, true);
     // wait until they are done/doing:
     Meteor._atFlush(function() {
+      
+      if(self._options.before){
+        self._options.before();
+      }
+      
       // add relevant classes to the body and wait for the body to finish 
       // transitioning (this is how we know the transition is done)
       $('body')
@@ -87,13 +107,17 @@
       return;
     
     // switch
-    self._setCurrentPage(self._nextPage);
-    self._setNextPage(null);
+    self._setCurrentPage(self._nextPage, false);
+    self._setNextPage(null, false);
     
     // clean up our transitioning state
     Meteor._atFlush(function() {
       var classes = self._transitionClasses();
       $('body').off('.transitioner').removeClass(classes);
+      
+      if(self._options.after){
+        self._options.after();
+      }
     });
   }
   
