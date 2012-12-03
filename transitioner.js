@@ -9,12 +9,24 @@
     this._currentPageListeners = new Meteor.deps._ContextSet();
     this._nextPage = null;
     this._nextPageListeners = new Meteor.deps._ContextSet();
+    this._options = {
+      before: function(){},
+      after: function(){}
+    };
   }
   Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
   
   Transitioner.prototype._transitionClasses = function() {
     return "transitioning from_" + this._currentPage + 
       " to_" + this._nextPage;
+  }
+  
+  Transitioner.prototype.setOptions = function(options) {
+    for (var key in options){
+      if (options.hasOwnProperty(key)){
+        this._options[key] = options[key];
+      }
+    }
   }
   
   Transitioner.prototype.currentPage = function() {
@@ -68,6 +80,11 @@
     self._setNextPage(newPage);
     // wait until they are done/doing:
     Meteor._atFlush(function() {
+      
+      if(self._options.before){
+        self._options.before();
+      }
+      
       // add relevant classes to the body and wait for the body to finish 
       // transitioning (this is how we know the transition is done)
       $('body')
@@ -94,6 +111,10 @@
     Meteor._atFlush(function() {
       var classes = self._transitionClasses();
       $('body').off('.transitioner').removeClass(classes);
+      
+      if(self._options.after){
+        self._options.after();
+      }
     });
   }
   
