@@ -6,6 +6,7 @@ Package.on_use(function (api, where) {
   api.use('router', 'client');
   api.use('deps', 'client');
   api.use('jquery', 'client');
+  api.use('underscore', 'client');
   api.add_files('transitioner.js', 'client');
 });
 

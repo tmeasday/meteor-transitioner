@@ -41,6 +41,12 @@ body.transitioning {
 }
 ```
 
+## Options
+
+Call `Meteor.Transitioner.setOptions` to set the transitioner's options. Current options:
+
+- `before/after` - Provide callbacks to be run just before / after the transition happens.
+
 ## Example
 
 See `/example/slider` in this application. Run it with `mrt`.
