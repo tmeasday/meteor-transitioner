@@ -89,6 +89,7 @@
   
   Transitioner.prototype.endTransition = function() {
     var self = this;
+    var classes = self._transitionClasses();
     
     // if nextPage isn't set, something weird is going on, bail
     if (! self._nextPage)
@@ -100,7 +101,6 @@
     
     // clean up our transitioning state
     Meteor._atFlush(function() {
-      var classes = self._transitionClasses();
       $('body').off('.transitioner').removeClass(classes);
       
       self._options.after && self._options.after();
