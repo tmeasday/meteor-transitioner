@@ -1,1 +1,3 @@
+0.2.2 - 14-03-2013 - Updated to support 0.5.8. Thanks @dangilkerson
+
 0.2.1 - 22-11-2012 - Changed transition events to be a class variable, thanks @tomconroy.
