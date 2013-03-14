@@ -2,32 +2,27 @@
   "meteor": {
     "git": "https://github.com/meteor/meteor.git",
     "branch": "master",
-    "commit": "68dafc94c5f1eb6cf2350ee74e9f65130f665bc5"
+    "commit": "471f661c5b32bf66746077defbbac8b2b26046c6"
   },
   "dependencies": {
     "basePackages": {
       "transitioner": {
-        "path": "../../"
+        "path": "../.."
       }
     },
     "packages": {
       "transitioner": {
-        "path": "../../"
-      },
-      "deps-extensions": {
-        "git": "https://github.com/tmeasday/meteor-deps-extensions.git",
-        "tag": "v0.1.0",
-        "commit": "110462c0ba33aaeb35e55069134287325cc453e5"
+        "path": "../.."
       },
       "router": {
         "git": "https://github.com/tmeasday/meteor-router.git",
-        "tag": "v0.2.2",
-        "commit": "b1e205f3cbde62ae3c91f06429d681580d9aa322"
+        "tag": "v0.4.3",
+        "commit": "0691a6e2c4c249ce7d00cd6dc7ad27e1c7330a31"
       },
-      "page-js": {
-        "git": "https://github.com/tmeasday/meteor-page-js.git",
-        "tag": "v1.3.1",
-        "commit": "ee0b651869928abe50b5d06d7f32ccd2e657883a"
+      "page-js-ie-support": {
+        "git": "https://github.com/tmeasday/meteor-page-js-ie-support.git",
+        "tag": "v1.3.5",
+        "commit": "b99ed8380aefd10b2afc8f18d9eed4dd0d8ea9cb"
       }
     }
   }
