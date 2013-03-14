@@ -6,9 +6,9 @@
 (function() {
   var Transitioner = function() {
     this._currentPage = null;
-    this._currentPageListeners = new Meteor.deps._ContextSet();
+    this._currentPageListeners = new Deps.Dependency();
     this._nextPage = null;
-    this._nextPageListeners = new Meteor.deps._ContextSet();
+    this._nextPageListeners = new Deps.Dependency();
     this._options = {}
   }
   Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
@@ -23,29 +23,29 @@
   }
   
   Transitioner.prototype.currentPage = function() {
-    this._currentPageListeners.addCurrentContext();
+    Deps.depend(this._currentPageListeners);
     return this._currentPage;
   }
   
   Transitioner.prototype._setCurrentPage = function(page) {
     this._currentPage = page;
-    this._currentPageListeners.invalidateAll();
+    this._currentPageListeners.changed();
   }
   
   Transitioner.prototype.nextPage = function() {
-    this._nextPageListeners.addCurrentContext();
+    Deps.depend(this._nextPageListeners);
     return this._nextPage;
   }
   
   Transitioner.prototype._setNextPage = function(page) {
     this._nextPage = page;
-    this._nextPageListeners.invalidateAll();
+    this._nextPageListeners.changed();
   }
   
   Transitioner.prototype.listen = function() {
     var self = this;
-    
-    Meteor.autorun(function() {
+
+    Deps.autorun(function() {
       self.transition(Meteor.Router.page());
     });
   }
@@ -72,7 +72,7 @@
     // Start the transition -- first tell any listeners to re-draw themselves
     self._setNextPage(newPage);
     // wait until they are done/doing:
-    Meteor._atFlush(function() {
+    Deps.afterFlush(function() {
       
       self._options.before && self._options.before();
       
@@ -100,7 +100,7 @@
     self._setNextPage(null);
     
     // clean up our transitioning state
-    Meteor._atFlush(function() {
+    Deps.afterFlush(function() {
       $('body').off('.transitioner').removeClass(classes);
       
       self._options.after && self._options.after();
