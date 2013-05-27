@@ -11,11 +11,12 @@
     this._nextPageListeners = new Deps.Dependency();
     this._options = {}
   }
+  Transitioner._TRANSITIONING_CLASS = 'transitioning';
+  
   Transitioner.prototype._transitionEvents = 'webkitTransitionEnd.transitioner oTransitionEnd.transitioner transitionEnd.transitioner msTransitionEnd.transitioner transitionend.transitioner';
   
   Transitioner.prototype._transitionClasses = function() {
-    return "transitioning from_" + this._currentPage + 
-      " to_" + this._nextPage;
+    return "from_" + this._currentPage + " to_" + this._nextPage;
   }
   
   Transitioner.prototype.setOptions = function(options) {
@@ -69,22 +70,23 @@
     if (self._currentPage === newPage)
       return;
     
-    // Start the transition -- first tell any listeners to re-draw themselves
+    // Setup the transition -- first tell any listeners to re-draw themselves
+    // and set the informative class on the body.
     self._setNextPage(newPage);
-    // wait until they are done/doing:
-    Deps.afterFlush(function() {
-      
-      self._options.before && self._options.before();
+    $('body').addClass(self._transitionClasses())
+    self._options.before && self._options.before();
+    
+    // let the DOM re-draw, then start the transition
+    Meteor.defer(function() {
       
       // add relevant classes to the body and wait for the body to finish 
       // transitioning (this is how we know the transition is done)
       $('body')
-        .addClass(self._transitionClasses())
+        .addClass(Transitioner._TRANSITIONING_CLASS)
         .on(self._transitionEvents, function (e) {
-          if ($(e.target).is('body'))
-            self.endTransition();
+          $(e.target).is('body') && self.endTransition();
         });
-    })
+    });
   }
   
   Transitioner.prototype.endTransition = function() {
@@ -101,7 +103,8 @@
     
     // clean up our transitioning state
     Deps.afterFlush(function() {
-      $('body').off('.transitioner').removeClass(classes);
+      $('body').off('.transitioner')
+        .removeClass(classes).removeClass(Transitioner._TRANSITIONING_CLASS);
       
       self._options.after && self._options.after();
     });
