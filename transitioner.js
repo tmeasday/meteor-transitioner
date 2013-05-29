@@ -10,6 +10,11 @@
     this._nextPage = null;
     this._nextPageListeners = new Deps.Dependency();
     this._options = {}
+    
+    // this tells us if we are transitioning from A -> B or B -> A
+    this._currentPageisFirstPane = true;
+    this._firstPaneListeners = new Deps.Dependency();
+    this._secondPaneListeners = new Deps.Dependency();    
   }
   Transitioner._TRANSITIONING_CLASS = 'transitioning';
   
@@ -24,7 +29,7 @@
   }
   
   Transitioner.prototype.currentPage = function() {
-    Deps.depend(this._currentPageListeners);
+    this._currentPageListeners.depend();
     return this._currentPage;
   }
   
@@ -34,7 +39,7 @@
   }
   
   Transitioner.prototype.nextPage = function() {
-    Deps.depend(this._nextPageListeners);
+    this._nextPageListeners.depend();
     return this._nextPage;
   }
   
@@ -42,6 +47,25 @@
     this._nextPage = page;
     this._nextPageListeners.changed();
   }
+  
+  Transitioner.prototype._firstOrsecondPane = function(first) {
+    if (first === this._currentPageisFirstPane) {
+      return this._currentPage;
+    } else {
+      return this._nextPage;
+    }
+  }
+  
+  Transitioner.prototype.firstPane = function() {
+    this._firstPaneListeners.depend()
+    return this._firstOrsecondPane(true);
+  }
+  
+  Transitioner.prototype.secondPane = function() {
+    this._secondPaneListeners.depend();
+    return this._firstOrsecondPane(false);
+  }
+  
   
   Transitioner.prototype.listen = function() {
     var self = this;
@@ -59,8 +83,16 @@
     var self = this;
     
     // this is our first page? don't do a transition
-    if (!self._currentPage)
-      return self._setCurrentPage(newPage);
+    if (!self._currentPage) {
+      self._setCurrentPage(newPage);
+      // should always be true, but better to be sure
+      if (this._currentPageisFirstPane) { 
+        this._firstPaneListeners.changed();
+      } else {
+        this._secondPaneListeners.changed();
+      }
+      return;
+    }
     
     // if we are transitioning already, quickly finish that transition
     if (self._nextPage)
@@ -73,6 +105,13 @@
     // Setup the transition -- first tell any listeners to re-draw themselves
     // and set the informative class on the body.
     self._setNextPage(newPage);
+    // now tell the correct page about it.
+    if (this._currentPageisFirstPane) {
+      this._secondPaneListeners.changed();
+    } else {
+      this._firstPaneListeners.changed();
+    }
+    
     $('body').addClass(self._transitionClasses())
     self._options.before && self._options.before();
     
@@ -100,9 +139,27 @@
     // switch
     self._setCurrentPage(self._nextPage);
     self._setNextPage(null);
+    // now tell the right page to change too
+    if (this._currentPageisFirstPane) {
+      this._firstPaneListeners.changed();
+    } else {
+      this._secondPaneListeners.changed();
+    }
+    // we are going to switch the classes in _just a second_
+    this._currentPageisFirstPane = !this._currentPageisFirstPane;
     
     // clean up our transitioning state
     Deps.afterFlush(function() {
+      // Switch the classes
+      console.log($('#first-pane').attr('class'))
+      console.log(self._currentPageisFirstPane);
+      $('#first-pane').toggleClass('current-page', self._currentPageisFirstPane)
+        .toggleClass('next-page', !self._currentPageisFirstPane);
+      console.log($('#first-pane').attr('class'))
+      $('#second-pane').toggleClass('current-page', !self._currentPageisFirstPane)
+        .toggleClass('next-page', self._currentPageisFirstPane);
+      
+      
       $('body').off('.transitioner')
         .removeClass(classes).removeClass(Transitioner._TRANSITIONING_CLASS);
       

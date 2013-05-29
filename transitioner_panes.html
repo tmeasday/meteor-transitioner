@@ -1,0 +1,19 @@
+<template name="transitionerPanes">
+  {{> transitionerFirstPane}}
+  {{> transitionerSecondPane}}
+</template>
+
+<template name="transitionerFirstPane">
+  {{! the transitioner will manually change the classes on these elements 
+      until Meteor better supports changing classnames without redrawing
+      everything below}}
+  <div class="current-page" id="first-pane">
+    {{#isolate}}{{{firstPane}}}{{/isolate}}
+  </div>
+</template>
+
+<template name="transitionerSecondPane">
+  <div class="next-page" id="second-pane">
+    {{#isolate}}{{{secondPane}}}{{/isolate}}
+  </div>
+</template>

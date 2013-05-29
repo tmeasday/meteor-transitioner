@@ -7,7 +7,8 @@ Package.on_use(function (api, where) {
   api.use('deps', 'client');
   api.use('jquery', 'client');
   api.use('underscore', 'client');
-  api.add_files('transitioner.js', 'client');
+  api.use('templating', 'client');
+  api.add_files(['transitioner.js', 'transitioner_panes.html', 'transitioner_panes.js'], 'client');
 });
 
 
