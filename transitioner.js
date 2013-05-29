@@ -151,11 +151,8 @@
     // clean up our transitioning state
     Deps.afterFlush(function() {
       // Switch the classes
-      console.log($('#first-pane').attr('class'))
-      console.log(self._currentPageisFirstPane);
       $('#first-pane').toggleClass('current-page', self._currentPageisFirstPane)
         .toggleClass('next-page', !self._currentPageisFirstPane);
-      console.log($('#first-pane').attr('class'))
       $('#second-pane').toggleClass('current-page', !self._currentPageisFirstPane)
         .toggleClass('next-page', self._currentPageisFirstPane);
       
