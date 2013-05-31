@@ -75,6 +75,14 @@
     });
   }
   
+  // XXX: I don't know if this is the best way to achieve this
+  //
+  // probably would be better to use a data-X on the link
+  // and _stop_ the router from routing
+  Transitioner.prototype.ignoreNextTransition = function() {
+    this._ignoreNextTransition = true;
+  }
+  
   // do a transition to newPage, if we are already set and there already
   //
   // note: this is called inside an autorun, so we need to take care to not 
@@ -82,8 +90,12 @@
   Transitioner.prototype.transition = function(newPage) {
     var self = this;
     
+    console.log('transitioning to ' + newPage);
+    
     // this is our first page? don't do a transition
-    if (!self._currentPage) {
+    if (! self._currentPage || self._ignoreNextTransition) {
+      self._ignoreNextTransition = false;
+      
       self._setCurrentPage(newPage);
       // should always be true, but better to be sure
       if (this._currentPageisFirstPane) { 
