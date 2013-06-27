@@ -79,8 +79,8 @@
   //
   // probably would be better to use a data-X on the link
   // and _stop_ the router from routing
-  Transitioner.prototype.ignoreNextTransition = function() {
-    this._ignoreNextTransition = true;
+  Transitioner.prototype.ignoreNextTransition = function(bool) {
+    this._ignoreNextTransition = _.isUndefined(bool) ? true : bool;
   }
   
   // do a transition to newPage, if we are already set and there already
